@@ -21,5 +21,49 @@ module Notyfhir
         end
       end
     end
+    
+    def notyfhir_pwa_meta_tags
+      return "" unless Notyfhir.configuration.pwa_enabled
+      
+      safe_join([
+        tag.link(rel: "manifest", href: pwa_manifest_path(format: :json)),
+        tag.meta(name: "apple-mobile-web-app-capable", content: "yes"),
+        tag.meta(name: "apple-mobile-web-app-status-bar-style", content: "black-translucent"),
+        tag.meta(name: "apple-mobile-web-app-title", content: pwa_app_name),
+        tag.meta(name: "mobile-web-app-capable", content: "yes"),
+        tag.meta(name: "theme-color", content: Notyfhir.configuration.app_theme_color),
+        tag.link(rel: "apple-touch-icon", href: "/icon-192.png"),
+        tag.link(rel: "apple-touch-icon", sizes: "152x152", href: "/icon-152.png"),
+        tag.link(rel: "apple-touch-icon", sizes: "180x180", href: "/icon-180.png"),
+        tag.link(rel: "apple-touch-icon", sizes: "167x167", href: "/icon-167.png")
+      ], "\n")
+    end
+    
+    def notyfhir_install_prompt_button(options = {})
+      return "" unless Notyfhir.configuration.pwa_enabled
+      
+      button_class = options[:class] || "hidden fixed bottom-4 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition-colors"
+      
+      content_tag(:button, 
+        options[:text] || t("notyfhir.pwa.install", default: "Install App"),
+        id: "notyfhir-install-button",
+        class: button_class,
+        data: {
+          controller: "notyfhir--install",
+          action: "click->notyfhir--install#install"
+        }
+      )
+    end
+    
+    private
+    
+    def pwa_app_name
+      Notyfhir.configuration.app_name || Rails.application.class.module_parent_name
+    end
+    
+    def pwa_manifest_path(options = {})
+      return main_app.pwa_manifest_path(options) if main_app.respond_to?(:pwa_manifest_path)
+      "/manifest.json"
+    end
   end
 end

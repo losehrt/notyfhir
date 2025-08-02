@@ -47,3 +47,17 @@ zh-TW:
         step2: "找到「通知」設定"
         step3: "將權限從「封鎖」改為「允許」"
         step4: "重新載入此頁面"
+    
+    pwa:
+      install: "安裝應用程式"
+      offline:
+        title: "離線"
+        heading: "您目前離線"
+        message: "請檢查您的網路連線後再試一次。"
+        retry: "重試"
+    
+    shortcuts:
+      notifications: "通知"
+      view_notifications: "檢視所有通知"
+      settings: "通知設定"
+      notification_settings: "管理通知設定"
