@@ -1,0 +1,32 @@
+<div class="mx-auto max-w-4xl p-6" data-controller="notyfhir--badge" data-notyfhir--badge-count-value="<%= current_user.notyfhir_notifications.unread.count %>">
+  <div class="mb-4">
+    <%= link_to "← 返回通知列表", notifications_path, class: "text-blue-600 hover:text-blue-800" %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <h1 class="text-2xl font-bold mb-4"><%= @notification.title %></h1>
+    
+    <div class="prose max-w-none">
+      <p class="text-gray-700"><%= @notification.body %></p>
+    </div>
+    
+    <div class="mt-6 pt-6 border-t">
+      <p class="text-sm text-gray-500">
+        接收時間: <%= @notification.created_at.strftime("%Y年%m月%d日 %H:%M:%S") %>
+      </p>
+      
+      <% if @notification.read_at %>
+        <p class="text-sm text-gray-500 mt-1">
+          已讀時間: <%= @notification.read_at.strftime("%Y年%m月%d日 %H:%M:%S") %>
+        </p>
+      <% end %>
+    </div>
+    
+    <% if @notification.data.present? %>
+      <div class="mt-6 pt-6 border-t">
+        <h3 class="font-semibold mb-2">附加資訊</h3>
+        <pre class="bg-gray-50 p-4 rounded overflow-x-auto"><%= JSON.pretty_generate(@notification.data) %></pre>
+      </div>
+    <% end %>
+  </div>
+</div>

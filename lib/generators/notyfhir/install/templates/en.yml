@@ -1,0 +1,49 @@
+en:
+  notyfhir:
+    notifications:
+      title: "Notification Center"
+      settings: "Notification Settings"
+      unread: "Unread"
+      mark_all_as_read: "Mark all as read"
+      no_notifications: "No notifications"
+      mark_as_read: "Mark as read"
+      read: "Read"
+      received_at: "Received at"
+      read_at: "Read at"
+      additional_info: "Additional Information"
+      back_to_list: "← Back to notifications"
+      all_marked_as_read: "All notifications marked as read"
+    
+    notification_settings:
+      title: "Notification Settings"
+      push_notifications: "Push Notifications"
+      test_feature: "Test Push Feature"
+      send_test: "Send Test Notification"
+      test_sent: "Test notification sent"
+      checking_support: "Checking push support..."
+      not_supported: "Your browser doesn't support push notifications"
+      enable: "Enable Notifications"
+      disable: "Disable Notifications"
+      enabled: "Push notifications enabled"
+      permission_denied: "Notification permission denied"
+      permission_denied_help: "Notification permission has been denied"
+      enable_failed: "Failed to enable notifications"
+      active_devices: "Registered Devices"
+      no_devices: "No registered devices"
+      remove_device: "Remove"
+      remove_confirm: "Are you sure you want to remove this device?"
+      
+      ios_setup:
+        title: "iOS Push Notification Setup:"
+        step1: "Tap the Share button ⬆️ at the bottom of Safari"
+        step2: "Select 'Add to Home Screen'"
+        step3: "Open this app from your home screen"
+        step4: "Return to notification settings to enable push"
+        note: "Note: iOS 16.4+ required for web push notifications"
+      
+      permission_help:
+        title: "How to re-enable notification permissions:"
+        step1: "Click the 🔒 icon in your browser's address bar"
+        step2: "Find 'Notifications' settings"
+        step3: "Change permission from 'Block' to 'Allow'"
+        step4: "Reload this page"

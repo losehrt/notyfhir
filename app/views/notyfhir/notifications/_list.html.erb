@@ -1,0 +1,11 @@
+<div class="space-y-2">
+  <% if notifications.any? %>
+    <% notifications.each do |notification| %>
+      <%= render partial: "notyfhir/notifications/notification", locals: { notification: notification } %>
+    <% end %>
+  <% else %>
+    <div class="text-center py-8 text-gray-500">
+      目前沒有任何通知
+    </div>
+  <% end %>
+</div>

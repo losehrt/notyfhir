@@ -1,0 +1,210 @@
+<div class="max-w-4xl mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-6">通知設定</h1>
+  
+  <div class="bg-white rounded-lg shadow p-6 mb-6">
+    <h2 class="text-lg font-semibold mb-4">推播通知</h2>
+    
+    <!-- 臨時測試按鈕 -->
+    <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded">
+      <p class="text-sm mb-2">測試推播功能</p>
+      <%= form_with url: test_notification_settings_path, method: :post, local: true do |f| %>
+        <%= f.submit "發送測試通知", class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 cursor-pointer" %>
+      <% end %>
+    </div>
+    
+    <div id="notification-status" class="mb-4">
+      <p class="text-gray-600">檢查推播支援狀態...</p>
+    </div>
+    
+    <div id="notification-permission" class="mb-4" style="display: none;">
+      <button id="enable-notifications" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        啟用通知
+      </button>
+    </div>
+    
+    <div id="notification-enabled" style="display: none;">
+      <p class="text-green-600 mb-4">推播通知已啟用</p>
+      
+      <%= form_with url: test_notification_settings_path, method: :post, local: true, class: "mb-4" do |f| %>
+        <%= f.submit "發送測試通知", class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 cursor-pointer" %>
+      <% end %>
+      
+      <button id="disable-notifications" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+        停用通知
+      </button>
+    </div>
+  </div>
+  
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-semibold mb-4">已註冊裝置</h2>
+    <%= turbo_frame_tag "push_subscriptions" do %>
+      <ul id="push_subscriptions_list" class="space-y-2">
+        <% if @push_subscriptions.any? %>
+          <%= render partial: "notyfhir/push_subscriptions/push_subscription", collection: @push_subscriptions %>
+        <% else %>
+          <li id="empty-state" class="text-gray-500 text-center py-4">尚無已註冊的裝置</li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  const vapidPublicKey = '<%= @vapid_public_key %>';
+  const pushSubscriptionUrl = '<%= push_subscriptions_path %>';
+  
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/\-/g, '+')
+      .replace(/_/g, '/');
+    
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
+  
+  async function checkNotificationSupport() {
+    const statusEl = document.getElementById('notification-status');
+    const permissionEl = document.getElementById('notification-permission');
+    const enabledEl = document.getElementById('notification-enabled');
+    
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      // 檢查是否為 iOS
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      
+      if (isIOS) {
+        // 檢查是否為 PWA 模式
+        const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+        
+        if (!isStandalone) {
+          statusEl.innerHTML = `
+            <div class="text-amber-600 space-y-2">
+              <p class="font-semibold">iOS 推播通知設定步驟：</p>
+              <ol class="list-decimal list-inside space-y-1 text-sm">
+                <li>點擊 Safari 底部的「分享」按鈕 <span class="inline-block">⬆️</span></li>
+                <li>選擇「加入主畫面」</li>
+                <li>從主畫面開啟此應用程式</li>
+                <li>再次進入通知設定即可啟用推播</li>
+              </ol>
+              <p class="text-xs mt-2">註：iOS 16.4+ 才支援網頁推播通知</p>
+            </div>
+          `;
+          return;
+        }
+      } else {
+        statusEl.innerHTML = '<p class="text-red-600">您的瀏覽器不支援推播通知</p>';
+        return;
+      }
+    }
+    
+    // 檢查當前的通知權限狀態
+    const permission = Notification.permission;
+    console.log('Current notification permission:', permission);
+    
+    if (permission === 'denied') {
+      statusEl.innerHTML = `
+        <div class="text-red-600 space-y-2">
+          <p>通知權限已被拒絕</p>
+          <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p class="font-semibold mb-2">如何重新允許通知權限：</p>
+            <ol class="list-decimal list-inside space-y-1 text-sm">
+              <li>點擊瀏覽器網址列左側的🔒圖示</li>
+              <li>找到「通知」設定</li>
+              <li>將權限從「封鎖」改為「允許」</li>
+              <li>重新載入此頁面</li>
+            </ol>
+          </div>
+        </div>
+      `;
+      statusEl.style.display = 'block';
+      permissionEl.style.display = 'none';
+      enabledEl.style.display = 'none';
+      return;
+    }
+    
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      
+      if (subscription) {
+        statusEl.style.display = 'none';
+        enabledEl.style.display = 'block';
+      } else {
+        statusEl.style.display = 'none';
+        permissionEl.style.display = 'block';
+      }
+    } catch (error) {
+      console.error('Error checking notification support:', error);
+      statusEl.innerHTML = '<p class="text-red-600">錯誤: ' + error.message + '</p>';
+      statusEl.style.display = 'block';
+    }
+  }
+  
+  document.getElementById('enable-notifications')?.addEventListener('click', async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      
+      if (permission !== 'granted') {
+        alert('通知權限被拒絕');
+        return;
+      }
+      
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+      });
+      
+      const response = await fetch(pushSubscriptionUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        },
+        body: JSON.stringify(subscription)
+      });
+      
+      if (response.ok) {
+        // 直接重新載入頁面以確保狀態正確更新
+        location.reload();
+      }
+    } catch (error) {
+      console.error('Error enabling notifications:', error);
+      alert('啟用通知失敗');
+    }
+  });
+  
+  document.getElementById('disable-notifications')?.addEventListener('click', async () => {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      
+      if (subscription) {
+        await subscription.unsubscribe();
+        
+        await fetch(pushSubscriptionUrl, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+          },
+          body: JSON.stringify({ endpoint: subscription.endpoint })
+        });
+        
+        location.reload();
+      }
+    } catch (error) {
+      console.error('Error disabling notifications:', error);
+    }
+  });
+  
+  // Check support on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    checkNotificationSupport();
+  });
+</script>

@@ -1,0 +1,25 @@
+<div class="mx-auto max-w-4xl p-6" data-controller="notyfhir--badge" data-notyfhir--badge-count-value="<%= @unread_count %>">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">通知中心</h1>
+    
+    <div class="flex items-center gap-4">
+      <%= link_to "通知設定", notification_settings_path, 
+          class: "text-sm text-blue-600 hover:text-blue-800" %>
+      
+      <span class="text-sm text-gray-500">
+        未讀通知: <span id="unread_count" class="font-semibold"><%= @unread_count %></span>
+      </span>
+      
+      <% if @unread_count > 0 %>
+        <%= button_to "全部標記為已讀", mark_all_as_read_notifications_path, 
+            method: :post,
+            class: "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600",
+            data: { turbo_method: :post } %>
+      <% end %>
+    </div>
+  </div>
+
+  <div id="notifications_list">
+    <%= render partial: "list", locals: { notifications: @notifications } %>
+  </div>
+</div>

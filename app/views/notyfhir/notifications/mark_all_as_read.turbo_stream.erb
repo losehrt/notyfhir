@@ -1,0 +1,18 @@
+<%= turbo_stream.replace("notifications_list") do %>
+  <%= render partial: "notyfhir/notifications/list", locals: { notifications: current_user.notyfhir_notifications.recent } %>
+<% end %>
+
+<%= turbo_stream.update("unread_count", "0") %>
+
+<%= turbo_stream.replace("app_badge") do %>
+  <div id="app_badge" data-controller="notyfhir--badge" data-notyfhir--badge-count-value="0"></div>
+<% end %>
+
+<%= turbo_stream.append("notifications_list") do %>
+  <script>
+    // 直接呼叫 Badge API 清除 badge
+    if ('clearAppBadge' in navigator) {
+      navigator.clearAppBadge();
+    }
+  </script>
+<% end %>

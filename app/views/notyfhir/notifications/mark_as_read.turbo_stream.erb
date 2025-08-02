@@ -1,0 +1,25 @@
+<% unread_count = current_user.notyfhir_notifications.unread.count %>
+
+<%= turbo_stream.replace(@notification) do %>
+  <%= render partial: "notyfhir/notifications/notification", locals: { notification: @notification } %>
+<% end %>
+
+<%= turbo_stream.update("unread_count", unread_count) %>
+
+<%= turbo_stream.replace("app_badge") do %>
+  <div id="app_badge" data-controller="notyfhir--badge" data-notyfhir--badge-count-value="<%= unread_count %>"></div>
+<% end %>
+
+<%= turbo_stream.append("notifications_list") do %>
+  <script>
+    // 直接呼叫 Badge API 更新 badge
+    const count = <%= unread_count %>;
+    if ('setAppBadge' in navigator && 'clearAppBadge' in navigator) {
+      if (count > 0) {
+        navigator.setAppBadge(count);
+      } else {
+        navigator.clearAppBadge();
+      }
+    }
+  </script>
+<% end %>
