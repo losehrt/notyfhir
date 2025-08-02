@@ -130,6 +130,13 @@ pin "@notyfhir/badge_controller", to: "notyfhir/badge_controller.js"
         invoke "notyfhir:vapid_keys"
       end
       
+      def ask_for_pwa_setup
+        if yes?("\nWould you like to enable PWA (Progressive Web App) support? (y/N)")
+          puts "\nGenerating PWA components..."
+          invoke "notyfhir:pwa"
+        end
+      end
+      
       def show_post_install_message
         puts "\n"
         puts "=" * 80
@@ -140,6 +147,8 @@ pin "@notyfhir/badge_controller", to: "notyfhir/badge_controller.js"
         puts "2. Add VAPID keys to your credentials or environment variables"
         puts "3. Add notification icon to your navigation (see README)"
         puts "4. Test push notifications at /notyfhir/notification_settings"
+        puts "\nOptional:"
+        puts "- Run 'rails generate notyfhir:pwa' to add PWA support"
         puts "\n"
       end
     end

@@ -16,6 +16,7 @@ A complete Rails engine for PWA push notifications with notification center, Bad
 - 🎨 **Tailwind CSS** - Beautiful, responsive UI components
 - ⚡ **Hotwire Integration** - Turbo Streams for real-time updates
 - 🔧 **Easy Installation** - Rails generator for quick setup
+- 📲 **PWA Ready** - Full Progressive Web App support with offline capability
 
 ## Requirements
 
@@ -237,8 +238,70 @@ The gem provides a service worker that handles:
 - Push notification display
 - Badge count management
 - Notification click handling
+- Offline support (with PWA enabled)
 
 The service worker is automatically registered and served at `/service-worker`.
+
+## PWA Support
+
+Notyfhir includes full Progressive Web App (PWA) support. To enable PWA features:
+
+### Enable PWA
+
+```bash
+$ rails generate notyfhir:pwa
+```
+
+This generator will:
+- Create a PWA controller and manifest
+- Add enhanced service worker with offline caching
+- Generate default app icons
+- Create an offline fallback page
+- Add PWA routes and configuration
+
+### PWA Configuration
+
+Configure PWA settings in your initializer:
+
+```ruby
+# config/initializers/notyfhir.rb
+Notyfhir.configure do |config|
+  # Enable PWA features
+  config.pwa_enabled = true
+  
+  # PWA manifest settings
+  config.app_name = "My App"
+  config.app_short_name = "MyApp"
+  config.app_description = "My Progressive Web App"
+  config.app_theme_color = "#000000"
+  config.app_background_color = "#ffffff"
+  config.app_display = "standalone"
+  config.app_start_url = "/"
+  config.app_scope = "/"
+end
+```
+
+### Using PWA Helpers
+
+Add PWA meta tags to your layout:
+
+```erb
+<%= notyfhir_pwa_meta_tags %>
+```
+
+Add an install button (appears when installable):
+
+```erb
+<%= notyfhir_install_prompt_button %>
+```
+
+### PWA Features
+
+- **Offline Support**: Automatically caches pages and assets for offline use
+- **Install Prompt**: Shows install button when app is installable
+- **App Shortcuts**: Quick access to notifications and settings from app icon
+- **Responsive Icons**: Includes all required icon sizes for different devices
+- **iOS Support**: Full compatibility with iOS PWA requirements
 
 ## Troubleshooting
 

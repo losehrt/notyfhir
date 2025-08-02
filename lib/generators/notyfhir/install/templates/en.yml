@@ -47,3 +47,17 @@ en:
         step2: "Find 'Notifications' settings"
         step3: "Change permission from 'Block' to 'Allow'"
         step4: "Reload this page"
+    
+    pwa:
+      install: "Install App"
+      offline:
+        title: "Offline"
+        heading: "You're offline"
+        message: "Please check your internet connection and try again."
+        retry: "Try Again"
+    
+    shortcuts:
+      notifications: "Notifications"
+      view_notifications: "View all notifications"
+      settings: "Notification Settings"
+      notification_settings: "Manage notification settings"

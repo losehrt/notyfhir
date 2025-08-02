@@ -35,6 +35,7 @@ module Notyfhir
       app.config.assets.precompile += %w[
         notyfhir/service-worker.js
         notyfhir/badge_controller.js
+        notyfhir/install_controller.js
       ]
     end
     

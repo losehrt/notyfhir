@@ -1,0 +1,39 @@
+{
+  "name": "<%= @name %>",
+  "short_name": "<%= @short_name %>",
+  "description": "<%= @description %>",
+  "start_url": "<%= @start_url %>",
+  "scope": "<%= @scope %>",
+  "display": "<%= @display %>",
+  "background_color": "<%= @background_color %>",
+  "theme_color": "<%= @theme_color %>",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "<%= I18n.t('notyfhir.shortcuts.notifications', default: 'Notifications') %>",
+      "url": "/notyfhir/notifications",
+      "description": "<%= I18n.t('notyfhir.shortcuts.view_notifications', default: 'View all notifications') %>"
+    },
+    {
+      "name": "<%= I18n.t('notyfhir.shortcuts.settings', default: 'Notification Settings') %>",
+      "url": "/notyfhir/notification_settings",
+      "description": "<%= I18n.t('notyfhir.shortcuts.notification_settings', default: 'Manage notification settings') %>"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["productivity", "utilities"]
+}
