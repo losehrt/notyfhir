@@ -23,6 +23,7 @@ A complete Rails engine for PWA push notifications with notification center, Bad
 - Ruby 3.1+
 - Stimulus and Turbo (Hotwire)
 - Tailwind CSS (for default styling)
+- User authentication system (Rails 8 built-in or custom)
 
 ## Installation
 
@@ -36,6 +37,34 @@ And then execute:
 
 ```bash
 $ bundle install
+```
+
+## Prerequisites
+
+### User Authentication
+
+Notyfhir requires a User model with authentication. If you don't have one:
+
+#### For Rails 8.0+
+```bash
+# Generate Rails 8 built-in authentication
+rails generate authentication
+rails db:migrate
+```
+
+#### For Rails 7.x and earlier
+```bash
+# Generate User model
+rails generate model User email:string:uniq password_digest:string
+rails db:migrate
+```
+
+Then update your User model:
+```ruby
+class User < ApplicationRecord
+  has_secure_password
+  validates :email, presence: true, uniqueness: true
+end
 ```
 
 ## Setup
