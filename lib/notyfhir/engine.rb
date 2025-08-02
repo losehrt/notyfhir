@@ -20,14 +20,7 @@ module Notyfhir
       #{root}/app/helpers
     ]
     
-    # 載入 migrations
-    initializer :append_migrations do |app|
-      unless app.root.to_s.match?(root.to_s)
-        config.paths["db/migrate"].expanded.each do |expanded_path|
-          app.config.paths["db/migrate"] << expanded_path
-        end
-      end
-    end
+    # Migrations 由 generator 處理，不在 engine 中載入
     
     # 載入 i18n 檔案
     initializer "notyfhir.i18n" do |app|
