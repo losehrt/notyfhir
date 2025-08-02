@@ -78,13 +78,25 @@ VAPID_PUBLIC_KEY=your_public_key_here
 VAPID_PRIVATE_KEY=your_private_key_here
 ```
 
-### 3. Run migrations
+### 3. Configure User model
+
+If the installer couldn't find your User model, add these associations manually:
+
+```ruby
+class User < ApplicationRecord
+  # Notyfhir associations
+  has_many :notyfhir_notifications, class_name: "Notyfhir::Notification", dependent: :destroy
+  has_many :notyfhir_push_subscriptions, class_name: "Notyfhir::PushSubscription", dependent: :destroy
+end
+```
+
+### 4. Run migrations
 
 ```bash
 $ rails db:migrate
 ```
 
-### 4. Add notification icon to your navigation
+### 5. Add notification icon to your navigation
 
 ```erb
 <%= notyfhir_notification_icon %>
