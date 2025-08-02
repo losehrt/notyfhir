@@ -19,9 +19,13 @@ module Notyfhir
       end
       
       def copy_migrations
-        migration_template "create_notyfhir_notifications.rb", "db/migrate/create_notyfhir_notifications.rb"
+        migration_template "create_notyfhir_notifications.rb", "db/migrate/create_notyfhir_notifications.rb", migration_version: migration_version
         sleep 1 # 確保 migration 時間戳不同
-        migration_template "create_notyfhir_push_subscriptions.rb", "db/migrate/create_notyfhir_push_subscriptions.rb"
+        migration_template "create_notyfhir_push_subscriptions.rb", "db/migrate/create_notyfhir_push_subscriptions.rb", migration_version: migration_version
+      end
+      
+      def migration_version
+        "[#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}]"
       end
       
       def copy_locales
