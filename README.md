@@ -1,5 +1,9 @@
 # Notyfhir
 
+[![Gem Version](https://badge.fury.io/rb/notyfhir.svg)](https://badge.fury.io/rb/notyfhir)
+[![Ruby](https://github.com/losehrt/notyfhir/actions/workflows/main.yml/badge.svg)](https://github.com/losehrt/notyfhir/actions/workflows/main.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A complete Rails engine for PWA push notifications with notification center, Badge API support, and iOS PWA compatibility.
 
 ## Features
