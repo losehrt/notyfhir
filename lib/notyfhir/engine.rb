@@ -48,14 +48,22 @@ module Notyfhir
     # 註冊 Stimulus controllers
     initializer "notyfhir.stimulus" do
       Rails.application.config.after_initialize do
-        Rails.application.config.stimulus.eager_load_controllers << "#{root}/app/javascript/controllers"
+        if defined?(Stimulus) && Stimulus.respond_to?(:config)
+          # Rails 8+ 使用新的 Stimulus 配置方式
+          Stimulus.config.eager_load_controllers << "#{root}/app/javascript/controllers"
+        elsif Rails.application.config.respond_to?(:stimulus)
+          # Rails 7 及以下版本
+          Rails.application.config.stimulus.eager_load_controllers << "#{root}/app/javascript/controllers"
+        end
       end
     end
     
     # 設定 importmap
     initializer "notyfhir.importmap", before: "importmap" do |app|
-      app.config.importmap.paths << root.join("config/importmap.rb")
-      app.config.importmap.cache_sweepers << root.join("app/javascript")
+      if app.config.respond_to?(:importmap)
+        app.config.importmap.paths << root.join("config/importmap.rb")
+        app.config.importmap.cache_sweepers << root.join("app/javascript") if app.config.importmap.respond_to?(:cache_sweepers)
+      end
     end
   end
 end

@@ -43,12 +43,25 @@ module Notyfhir
       end
       
       def add_user_associations
-        inject_into_class "app/models/user.rb", "User" do
-          <<-RUBY
+        user_model_path = "app/models/user.rb"
+        
+        if File.exist?(user_model_path)
+          inject_into_class user_model_path, "User" do
+            <<-RUBY
   # Notyfhir associations
   has_many :notyfhir_notifications, class_name: "Notyfhir::Notification", dependent: :destroy
   has_many :notyfhir_push_subscriptions, class_name: "Notyfhir::PushSubscription", dependent: :destroy
-          RUBY
+            RUBY
+          end
+        else
+          say_status :skip, "User model not found at #{user_model_path}", :yellow
+          say_status :info, "Please add the following to your User model manually:", :blue
+          say <<-MESSAGE
+
+  # Notyfhir associations
+  has_many :notyfhir_notifications, class_name: "Notyfhir::Notification", dependent: :destroy
+  has_many :notyfhir_push_subscriptions, class_name: "Notyfhir::PushSubscription", dependent: :destroy
+          MESSAGE
         end
       end
       
